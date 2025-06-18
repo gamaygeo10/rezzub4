@@ -1,0 +1,7 @@
+{
+  "name": "rezzub",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
