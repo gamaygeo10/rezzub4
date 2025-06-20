@@ -1,0 +1,328 @@
+.queue-page {
+  --background: linear-gradient(to bottom right, #111111, #dd5454);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 56px);
+  padding: 16px;
+  background: var(--background);
+}
+
+.ticket-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+
+.ticket-card {
+  margin-top: 70px;
+  width: 100%;
+  max-width: 420px;
+  padding: 28px 20px;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+
+  clip-path: polygon(
+    0% 0%, 5% 1.5%, 10% 0%, 15% 1.5%, 20% 0%, 25% 1.5%, 30% 0%, 35% 1.5%,
+    40% 0%, 45% 1.5%, 50% 0%, 55% 1.5%, 60% 0%, 65% 1.5%, 70% 0%, 75% 1.5%,
+    80% 0%, 85% 1.5%, 90% 0%, 95% 1.5%, 100% 0%, 100% 100%, 95% 98.5%,
+    90% 100%, 85% 98.5%, 80% 100%, 75% 98.5%, 70% 100%, 65% 98.5%,
+    60% 100%, 55% 98.5%, 50% 100%, 45% 98.5%, 40% 100%, 35% 98.5%,
+    30% 100%, 25% 98.5%, 20% 100%, 15% 98.5%, 10% 100%, 5% 98.5%, 0% 100%
+  );
+}
+
+
+/* Section styling */
+.ticket-section {
+  text-align: center;
+  padding: 16px 0;
+}
+
+.ticket-section.top {
+  margin-bottom: 16px;
+}
+
+.ticket-section.middle {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 24px 0;
+}
+
+.ticket-section.bottom {
+  margin-top: 16px;
+}
+
+.number {
+  font-size: 70px;
+  color: rgb(84, 226, 84);
+}
+
+.ticket-logo {
+  width: 200px;
+  margin: 0 auto 10px;
+  display: block;
+}
+
+h2 {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.desc {
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.desc-link {
+  font-size: 13px;
+  text-decoration: underline;
+  color: #000;
+}
+
+.progress-wrapper {
+  position: relative;
+  width: 100%;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.progress-indicator {
+  position: absolute;
+  top: -40px;
+  transform: translateX(-50%);
+  background-color: red;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.arrow-down {
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 7px solid rgb(46, 1, 1);
+  margin: 0 auto;
+  margin-top: 10px;
+}
+
+ion-progress-bar.custom-red {
+  --background: #ffc1c1;
+  --progress-background: red;
+  --progress-bar-height: 32px; 
+  border-radius: 16px;
+  margin-top: 8px;
+}
+
+
+.progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 14px;
+  font-weight: bold;
+  color: white; 
+  pointer-events: none;
+}
+
+
+ion-progress-bar.custom-red::part(bar) {
+  background: red;
+  height: 100%;
+  border-radius: 10px;
+}
+
+.queue-info {
+  font-weight: bold;
+  font-size: 15px;
+  margin: 8px 0;
+}
+
+.green {
+  color: limegreen;
+}
+
+.dotted-divider {
+  width: 100%;
+  border-top: 2px dotted #ccc;
+  margin: 16px 0;
+}
+
+.loading-dot {
+  width: 10px;
+  height: 10px;
+  background: #999;
+  border-radius: 50%;
+  margin: 12px auto;
+}
+
+.timestamp {
+  font-size: 12px;
+  color: #666;
+}
+
+.queue-id {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 10px;
+}
+
+.queueit-logo {
+  width: 100px;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Footer tabs */
+.footer-tabs {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+  width: 100%;
+  padding: 4px 0;
+}
+
+.footer-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #888;
+  font-size: 12px;
+  padding: 4px 0;
+  transition: color 0.2s ease;
+}
+
+.footer-tab ion-icon {
+  font-size: 22px;
+}
+
+.footer-tab.active {
+  color: #000;
+}
+
+.footer-tab.active ion-icon {
+  font-weight: bold;
+}
+
+.edit-btn ion-icon {
+  font-size: 28px;
+  color: black;
+}
+
+.no-shadow {
+  box-shadow: none !important;
+  --box-shadow: none !important;
+}
+
+.modal-content {
+  padding: 20px;
+  text-align: left;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-header h3 {
+  font-size: 20px;
+  margin: 0;
+  margin-left: 10px;
+  color: #000;
+}
+
+.back-btn ion-icon {
+  font-size: 24px;
+  color: #000;
+}
+
+.modal-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.modal-icon {
+  font-size: 24px;
+  color: #000;
+  margin-right: 12px;
+}
+
+.modal-label {
+  flex: 1;
+  color: #000;
+  font-size: 16px;
+}
+
+.modal-toggle {
+  margin-left: auto;
+}
+
+.menu-float-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  --color: black;
+}
+
+.floating-footer-icons {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 100px; 
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 30px;
+  padding: 6px 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+  ion-button {
+    --padding-start: 8px;
+    --padding-end: 8px;
+    --padding-top: 6px;
+    --padding-bottom: 6px;
+  }
+}
+
+.menu-slide-modal::part(content) {
+  background-color: white;
+  color: black;
+  width: 320px;             
+  height: auto;             
+  max-height: 90vh;
+  border-radius: 20px;
+  padding: 16px;
+  position: fixed;
+  top: 60px;
+  right: 20px;
+  transform: none;         
+  animation: fadeIn 0.3s ease-in-out;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  overflow-y: auto;
+  z-index: 999;
+}
+
+

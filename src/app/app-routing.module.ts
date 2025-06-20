@@ -11,6 +11,10 @@ const routes: Routes = [
     redirectTo: 'home',
     pathMatch: 'full'
   },
+  {
+    path: 'queue',
+    loadChildren: () => import('./queue/queue.module').then( m => m.QueuePageModule)
+  },
 ];
 
 @NgModule({

@@ -1,13 +1,48 @@
-<ion-content class="home-page">
+<ion-content class="queue-page">
   <ion-button fill="clear" class="menu-float-btn" (click)="openMenuModal()">
     <ion-icon name="menu-outline" slot="icon-only"></ion-icon>
   </ion-button>
 
-  <div class="scan-icon-container" (click)="showCameraModal()">
-    <ion-icon name="scan-circle-outline" class="scan-icon"></ion-icon>
-    <div class="scan-text">Join the Queue Now</div>
+  <!-- Ticket -->
+  <div class="ticket-container">
+    <div class="ticket-card">
+      <div class="ticket-section top">
+        <img src="assets/rezzub.png" alt="Rezzub" class="ticket-logo">
+        <h2 class="number">010</h2>
+        <p class="desc">You are in line. When it is almost your turn, please go near the counter.</p>
+      </div>
+
+      <div class="dotted-divider"></div>
+
+      <div class="ticket-section middle">
+        <div class="progress-wrapper">
+          <div class="progress-indicator" [style.left.%]="progressValue * 100">
+            {{ progressPercentage }}
+            <div class="arrow-down"></div>
+          </div>
+
+          <ion-progress-bar [value]="progressValue" class="custom-red"></ion-progress-bar>
+        </div>
+
+        <p class="queue-info">Number of users in line ahead of you: <span class="green">9</span></p>
+        <p class="desc">Expected time of your turn: 20mins</p>
+        <p class="desc">Your estimated wait time is: 20mins</p>
+        <div class="loading-dot"></div>
+        <p class="timestamp">Status last updated: 12:24:57 PM</p>
+      </div>
+
+      <div class="dotted-divider"></div>
+
+      <div class="ticket-section bottom">
+        <p class="queue-id">Queue ID: 287a2a46-d828-4ac9-b6e9-c3159553fcf2</p>
+      </div>
+      <div class="ticket-actions">
+        <ion-button expand="block" color="danger" (click)="cancelQueue()">Cancel Ticket</ion-button>
+      </div>
+    </div>
   </div>
 
+  <!-- Floating Footer Icons (Center Bottom) -->
   <div class="floating-footer-icons">
     <ion-button fill="clear" (click)="navigateTo('/home')">
       <ion-icon name="scan" size="large"></ion-icon>
@@ -16,23 +51,6 @@
       <ion-icon name="list-outline" size="large"></ion-icon>
     </ion-button>
   </div>
-
-  <!-- Camera Modal -->
-  <ion-modal [isOpen]="isCameraModalOpen" (didDismiss)="isCameraModalOpen = false">
-    <ng-template>
-      <div class="modal-gray-bg">
-        <ion-buttons slot="start">
-          <ion-button fill="clear" (click)="isCameraModalOpen = false">
-            <ion-icon name="chevron-back-outline" slot="icon-only" style="color: white;"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-        <div class="camera-square"></div>
-        <div class="flashlight-btn" (click)="toggleFlashlight()">
-          <ion-icon name="flashlight-outline"></ion-icon>
-        </div>
-      </div>
-    </ng-template>
-  </ion-modal>
 
   <!-- Menu Modal -->
   <ion-modal [isOpen]="isMenuModalOpen" (didDismiss)="isMenuModalOpen = false" class="menu-slide-modal">

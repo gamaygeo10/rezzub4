@@ -1,11 +1,20 @@
 #container {
   text-align: center;
-
   position: absolute;
   left: 0;
   right: 0;
   top: 50%;
   transform: translateY(-50%);
+}
+
+.edit-btn ion-icon {
+  font-size: 28px;
+  color: black;
+}
+
+.no-shadow {
+  box-shadow: none !important;
+  --box-shadow: none !important;
 }
 
 #container strong {
@@ -16,12 +25,311 @@
 #container p {
   font-size: 16px;
   line-height: 22px;
-
   color: #8c8c8c;
-
   margin: 0;
 }
 
 #container a {
   text-decoration: none;
 }
+
+.footer-tabs {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+  width: 100%;
+  padding: 4px 0;
+}
+
+.footer-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #888;
+  font-size: 12px;
+  padding: 4px 0;
+  transition: color 0.2s ease;
+}
+
+.footer-tab ion-icon {
+  font-size: 22px;
+}
+
+.footer-tab.active {
+  color: #000;
+}
+
+.footer-tab.active ion-icon {
+  font-weight: bold;
+}
+
+.scan-icon-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 56px); 
+  text-align: center;
+  cursor: pointer;
+}
+
+.scan-icon {
+  font-size: 120px;
+  color: #000000;
+}
+.modal-content {
+  padding: 20px;
+  text-align: center;
+}
+
+.modal-content h3 {
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.modal-content p {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.modal-actions ion-button {
+  margin-top: 10px;
+}
+
+.menu-slide-modal::part(content) {
+  background-color: white;
+  color: black;
+  width: 320px;             
+  height: auto;             
+  max-height: 90vh;
+  border-radius: 20px;
+  padding: 16px;
+  position: fixed;
+  top: 60px;
+  right: 20px;
+  transform: none;          
+  animation: fadeIn 0.3s ease-in-out;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  overflow-y: auto;
+  z-index: 999;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.modal-content {
+  padding: 20px;
+  text-align: left;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-header h3 {
+  font-size: 20px;
+  margin: 0;
+  margin-left: 10px;
+  color: #000;
+}
+
+.back-btn ion-icon {
+  font-size: 24px;
+  color: #000;
+}
+
+.modal-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.modal-icon {
+  font-size: 24px;
+  color: #000;
+  margin-right: 12px;
+}
+
+.modal-label {
+  flex: 1;
+  color: #000;
+  font-size: 16px;
+}
+
+.modal-toggle {
+  margin-left: auto;
+}
+
+.scan-icon-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 80px;
+  font-size: 18px;
+  color: #000;
+  cursor: pointer;
+}
+
+.scan-icon {
+  font-size: 120px;
+  color: #000000;
+}
+
+.scan-text {
+  margin-top: 12px;
+  font-size: 20px;
+  font-weight: 500;
+  color: #222;
+}
+
+.modal-gray-bg {
+  background-color: #000000;
+  height: 100%;
+  position: relative;
+}
+
+.modal-header {
+  background-color: transparent;
+  box-shadow: none;
+  padding-top: 10px;
+}
+
+.flashlight-btn {
+  position: absolute;
+  bottom: 80px; // moved up a bit
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: white;
+  border-radius: 50%;
+  padding: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.flashlight-btn ion-icon {
+  font-size: 24px;
+  color: #333;
+}
+
+.camera-square {
+  width: 250px;
+  height: 250px;
+  border: 3px solid white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+  border-radius: 8px;
+}
+
+.menu-float-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+  background: black !important;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  --color: white;
+}
+
+.floating-footer-icons {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 100px; 
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 30px;
+  padding: 6px 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+  ion-button {
+    --padding-start: 8px;
+    --padding-end: 8px;
+    --padding-top: 6px;
+    --padding-bottom: 6px;
+  }
+}
+
+.home-page {
+  --background: #fff;
+  position: relative;
+}
+
+.menu-float-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+  background: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.scan-icon-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 120px);
+  text-align: center;
+  color: #000;
+  cursor: pointer;
+}
+
+.scan-icon {
+  font-size: 120px;
+  color: #000000;
+}
+
+.scan-text {
+  margin-top: 12px;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.floating-footer-icons {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 100px;
+  background: black;
+  padding: 8px 24px;
+  border-radius: 40px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+
+  ion-icon {
+    color: white;
+  }
+
+  ion-button {
+    --color: white; 
+  }
+}
+
