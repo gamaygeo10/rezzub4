@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router'; 
+import { Router } from '@angular/router';
+import { FirebaseService } from '../firebase.service'; // Make sure path is correct
 
 @Component({
   selector: 'app-home',
@@ -10,36 +11,23 @@ import { Router } from '@angular/router';
 export class HomePage {
   isCameraModalOpen = false;
   isMenuModalOpen = false;
-  cameraEnabled = false;
+  cameraEnabled = true;
   speakerEnabled = false;
   vibrationEnabled = false;
   flashlightEnabled = false;
   activeTab = 'queue';
 
-  constructor(private router: Router) {} 
+  constructor(
+    private router: Router,
+    private firebaseService: FirebaseService
+  ) {}
+
   showCameraModal() {
     this.isCameraModalOpen = true;
   }
 
-  requestCamera() {
-    this.isCameraModalOpen = false;
-
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then((stream) => {
-        alert('Camera permission granted.');
-        stream.getTracks().forEach(track => track.stop());
-      })
-      .catch((err) => {
-        alert('Camera permission denied: ' + err.message);
-      });
-  }
-
   openMenuModal() {
     this.isMenuModalOpen = true;
-  }
-
-  setActiveTab(tab: string) {
-    this.activeTab = tab;
   }
 
   toggleFlashlight() {
@@ -47,6 +35,22 @@ export class HomePage {
   }
 
   navigateTo(path: string) {
-    this.router.navigate([path]); 
+    this.router.navigate([path]);
   }
+
+  async handleCameraSquareClick() {
+  this.isCameraModalOpen = false;
+
+  try {
+    const number = await this.firebaseService.addNextNumber();
+    console.log('Added number to Firebase:', number);
+
+    this.router.navigate(['/queue']);
+  } catch (error) {
+    console.error('Error adding number to Firebase:', error);
+  }
+}
+
+
+  
 }

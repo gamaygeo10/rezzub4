@@ -325,4 +325,26 @@ ion-progress-bar.custom-red::part(bar) {
   z-index: 999;
 }
 
+.edit-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
 
+  .number-input {
+    font-size: 36px;
+    font-weight: bold;
+    text-align: center;
+    max-width: 100px;
+    --padding-start: 0;
+    --padding-end: 0;
+    --background: transparent;
+    border: none;
+    outline: none;
+  }
+
+  .green {
+    color: rgb(84, 226, 84); 
+  }
+}

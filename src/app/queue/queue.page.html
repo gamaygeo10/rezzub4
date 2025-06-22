@@ -8,7 +8,21 @@
     <div class="ticket-card">
       <div class="ticket-section top">
         <img src="assets/rezzub.png" alt="Rezzub" class="ticket-logo">
-        <h2 class="number">010</h2>
+        <h2 class="number" *ngIf="!isEditing" (click)="startEditing()">
+          {{ latestNumber }}
+        </h2>
+
+        <div *ngIf="isEditing" class="edit-number">
+        <ion-input
+          type="number"
+          [(ngModel)]="editValue"
+          class="number-input green"
+          inputmode="numeric"
+          placeholder="Enter number">
+        </ion-input>
+        <ion-button size="small" (click)="saveEditedNumber()">Save</ion-button>
+      </div>
+
         <p class="desc">You are in line. When it is almost your turn, please go near the counter.</p>
       </div>
 
@@ -24,7 +38,10 @@
           <ion-progress-bar [value]="progressValue" class="custom-red"></ion-progress-bar>
         </div>
 
-        <p class="queue-info">Number of users in line ahead of you: <span class="green">9</span></p>
+        <p class="queue-info">
+          Number of users in line ahead of you:
+         <span class="green">{{ secondLatestNumber }}</span>
+        </p>
         <p class="desc">Expected time of your turn: 20mins</p>
         <p class="desc">Your estimated wait time is: 20mins</p>
         <div class="loading-dot"></div>
