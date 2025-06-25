@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { collection, addDoc, getDocs, getFirestore, query, orderBy, limit } from 'firebase/firestore';
 import { db } from '../firebase.config';
 import { deleteDoc, doc } from 'firebase/firestore';
-import { updateDoc } from 'firebase/firestore';
+import { updateDoc, where } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -75,4 +75,36 @@ async updateNumber(oldNumber: number, newNumber: number): Promise<void> {
     }
   }
 }
+
+async getQueueNumbers() {
+  const q = query(this.queueRef, orderBy('number', 'asc'));
+  const snapshot = await getDocs(q);
+  const numbers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  return numbers;
+}
+
+async deleteQueueNumber(id: string): Promise<void> {
+  const docRef = doc(this.queueRef, id);
+  await deleteDoc(docRef);
+}
+
+async updateQueueNumber(id: string, newNumber: number): Promise<void> {
+  const docRef = doc(this.queueRef, id);
+  await updateDoc(docRef, { number: newNumber });
+}
+
+async callQueueNumber(number: number): Promise<void> {
+  // Query to find the document with the specific 'number' field
+  const q = query(this.queueRef, where('number', '==', number));
+  const snapshot = await getDocs(q);
+
+  if (!snapshot.empty) {
+    const docToDelete = snapshot.docs[0]; // Get the first document matching the number
+    await deleteDoc(doc(this.queueRef, docToDelete.id));  // Delete the number from Firebase
+    console.log('Called and deleted number:', number);
+  } else {
+    console.error('Number not found in the queue');
+  }
+}
+
 }

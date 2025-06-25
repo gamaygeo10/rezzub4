@@ -51,6 +51,8 @@ export class HomePage {
   }
 }
 
-
+navigateToAdmin() {
+    this.router.navigate(['/admin']);
+  }
   
 }

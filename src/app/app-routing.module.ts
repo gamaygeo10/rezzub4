@@ -15,6 +15,10 @@ const routes: Routes = [
     path: 'queue',
     loadChildren: () => import('./queue/queue.module').then( m => m.QueuePageModule)
   },
+  {
+    path: 'admin',
+    loadChildren: () => import('./admin/admin.module').then( m => m.AdminPageModule)
+  },
 ];
 
 @NgModule({

@@ -1,6 +1,12 @@
 <ion-content class="home-page">
+  <!-- Floating Menu Button -->
   <ion-button fill="clear" class="menu-float-btn" (click)="openMenuModal()">
     <ion-icon name="menu-outline" slot="icon-only"></ion-icon>
+  </ion-button>
+
+  <!-- Floating Admin Button -->
+  <ion-button fill="clear" class="admin-float-btn" (click)="navigateTo('/admin')">
+    <ion-icon name="person-circle-outline" slot="icon-only"></ion-icon>
   </ion-button>
 
   <div class="scan-icon-container" (click)="showCameraModal()">

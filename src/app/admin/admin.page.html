@@ -1,0 +1,70 @@
+<ion-content>
+  <ion-segment [(ngModel)]="segment" color="primary">
+    <ion-segment-button value="list">
+      <ion-label>Queue List</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="call">
+      <ion-label>Call Number</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+ <div *ngIf="segment === 'list'">
+  <ion-list>
+    <ion-card *ngFor="let number of queueNumbers">
+      <ion-card-header>
+        <ion-card-title>
+          <div class="header-container">
+            <span>Number: {{ number.number }}</span>
+            <ion-button fill="clear" color="primary" (click)="updateNumber(number)" class="edit-btn">
+              <ion-icon name="create-outline"></ion-icon>
+            </ion-button>
+            <ion-button fill="clear" color="danger" (click)="deleteNumber(number.id)" class="icon-btn">
+              <ion-icon name="close-outline"></ion-icon>
+            </ion-button>
+          </div>
+        </ion-card-title>
+      </ion-card-header>
+    </ion-card>
+  </ion-list>
+</div>
+
+
+  <!-- Call Number Segment -->
+  <div *ngIf="segment === 'call'" class="call-number-container">
+    <div class="amount-display">
+      <span>{{ currentInput || '0' }}</span>
+      <ion-icon name="arrow-back" class="delete-icon" (click)="deleteLastDigit()"></ion-icon> <!-- Back icon -->
+    </div>
+
+    <div class="num-pad">
+      <div class="num-pad-row">
+        <ion-button (click)="addDigit(1)" expand="full" class="num-pad-btn-num">1</ion-button>
+        <ion-button (click)="addDigit(2)" expand="full" class="num-pad-btn-num">2</ion-button>
+        <ion-button (click)="addDigit(3)" expand="full" class="num-pad-btn-num">3</ion-button>
+      </div>
+
+      <div class="num-pad-row">
+        <ion-button (click)="addDigit(4)" expand="full" class="num-pad-btn-num">4</ion-button>
+        <ion-button (click)="addDigit(5)" expand="full" class="num-pad-btn-num">5</ion-button>
+        <ion-button (click)="addDigit(6)" expand="full" class="num-pad-btn-num">6</ion-button>
+      </div>
+
+      <div class="num-pad-row">
+        <ion-button (click)="addDigit(7)" expand="full" class="num-pad-btn-num">7</ion-button>
+        <ion-button (click)="addDigit(8)" expand="full" class="num-pad-btn-num">8</ion-button>
+        <ion-button (click)="addDigit(9)" expand="full" class="num-pad-btn-num">9</ion-button>
+      </div>
+
+      <div class="num-pad-row">
+        <ion-button (click)="clearDigit()" color="warning" expand="full" class="num-pad-btn">C</ion-button>
+        <ion-button (click)="addDigit(0)" expand="full" class="num-pad-btn-num">0</ion-button>
+        <ion-button (click)="callNumber()" color="success" expand="full" class="num-pad-btn">Enter</ion-button>
+      </div>
+    </div>
+
+    <!-- Display the called number message below the numpad -->
+    <div *ngIf="calledNumber" class="called-number-message">
+      <span>{{ calledNumber }}</span>
+    </div>
+  </div>
+</ion-content>
