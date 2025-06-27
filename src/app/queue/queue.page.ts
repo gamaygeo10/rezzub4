@@ -19,6 +19,12 @@ export class QueuePage implements OnInit, OnDestroy {
   latestNumber: string = '--';
   secondLatestNumber: string = '--';
 
+  userQueueNumber: number | null = null;
+  isCalled = false;
+
+  isEditing = false;
+  editValue = '';
+
   private routerSub?: Subscription;
 
   constructor(
@@ -27,14 +33,19 @@ export class QueuePage implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    // Listen for page entry and re-fetch data
     this.routerSub = this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd && event.urlAfterRedirects.includes('/queue')) {
         this.loadLatestNumber();
       }
     });
 
-    // Initial load
+    // ✅ Load the called number from localStorage if set by admin call
+    const called = localStorage.getItem('calledQueueNumber');
+    if (called) {
+      this.isCalled = true;
+      this.userQueueNumber = parseInt(called, 10);
+    }
+
     this.loadLatestNumber();
   }
 
@@ -42,16 +53,15 @@ export class QueuePage implements OnInit, OnDestroy {
     this.routerSub?.unsubscribe();
   }
 
-async loadLatestNumber() {
-  const numbers = await this.firebaseService.getTwoLatestNumbers();
-
-  if (numbers.length > 0) {
-    this.latestNumber = numbers[0].toString().padStart(3, '0');
+  async loadLatestNumber() {
+    const numbers = await this.firebaseService.getTwoLatestNumbers();
+    if (numbers.length > 0) {
+      this.latestNumber = numbers[0].toString().padStart(3, '0');
+    }
+    if (numbers.length > 1) {
+      this.secondLatestNumber = numbers[1].toString().padStart(3, '0');
+    }
   }
-  if (numbers.length > 1) {
-    this.secondLatestNumber = numbers[1].toString().padStart(3, '0');
-  }
-}
 
   get progressPercentage() {
     return Math.round(this.progressValue * 100) + '%';
@@ -66,39 +76,39 @@ async loadLatestNumber() {
   }
 
   async cancelQueue() {
-  try {
-    await this.firebaseService.deleteLatestNumber();
-    this.loadLatestNumber();
-    console.log('Queue ticket canceled and removed from Firebase.');
-    this.latestNumber = '--';
-    this.secondLatestNumber = '--';
-  } catch (error) {
-    console.error('Error cancelling queue ticket:', error);
-  }
-}
+    try {
+      await this.firebaseService.deleteLatestNumber();
+      this.loadLatestNumber();
 
-isEditing = false;
-editValue = '';
+      // ✅ Clear called flag when canceled
+      localStorage.removeItem('calledQueueNumber');
+      this.userQueueNumber = null;
+      this.isCalled = false;
 
-startEditing() {
-  this.editValue = this.latestNumber;
-  this.isEditing = true;
-}
+      this.latestNumber = '--';
+      this.secondLatestNumber = '--';
 
-async saveEditedNumber() {
-  const currentLatest = await this.firebaseService.getTwoLatestNumbers();
-
-  if (currentLatest.length > 0) {
-    const latest = currentLatest[0];
-    const newNumber = parseInt(this.editValue, 10);
-
-    if (!isNaN(newNumber)) {
-      await this.firebaseService.updateNumber(latest, newNumber);
-      this.isEditing = false;
-      this.loadLatestNumber(); // refresh
+      console.log('Queue ticket canceled and removed from Firebase.');
+    } catch (error) {
+      console.error('Error cancelling queue ticket:', error);
     }
   }
-}
 
+  startEditing() {
+    this.editValue = this.latestNumber;
+    this.isEditing = true;
+  }
 
+  async saveEditedNumber() {
+    const currentLatest = await this.firebaseService.getTwoLatestNumbers();
+    if (currentLatest.length > 0) {
+      const latest = currentLatest[0];
+      const newNumber = parseInt(this.editValue, 10);
+      if (!isNaN(newNumber)) {
+        await this.firebaseService.updateNumber(latest, newNumber);
+        this.isEditing = false;
+        this.loadLatestNumber();
+      }
+    }
+  }
 }

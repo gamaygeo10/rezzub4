@@ -3,6 +3,8 @@ import { collection, addDoc, getDocs, getFirestore, query, orderBy, limit } from
 import { db } from '../firebase.config';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { updateDoc, where } from 'firebase/firestore';
+import { onSnapshot } from 'firebase/firestore';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -105,6 +107,17 @@ async callQueueNumber(number: number): Promise<void> {
   } else {
     console.error('Number not found in the queue');
   }
+}
+
+watchQueueChanges(): Observable<number[]> {
+  return new Observable(observer => {
+    const q = query(this.queueRef, orderBy('number', 'asc'));
+    const unsubscribe = onSnapshot(q, snapshot => {
+      const numbers: number[] = snapshot.docs.map(doc => doc.data()['number']);
+      observer.next(numbers);
+    });
+    return () => unsubscribe();
+  });
 }
 
 }

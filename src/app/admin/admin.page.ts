@@ -61,25 +61,23 @@ async callNumber() {
   if (this.currentInput) {
     const numberToCall = parseInt(this.currentInput, 10);
     try {
-      // Call the number and remove it from Firebase
       await this.firebaseService.callQueueNumber(numberToCall);
-
-      // After deleting from Firebase, immediately remove the number from the local list (queueNumbers)
       this.queueNumbers = this.queueNumbers.filter(number => number.number !== numberToCall);
-
-      // Display the message for the called number
-      this.calledNumber = `Number ${numberToCall} has been called.`;  // This is the message to show
+      this.calledNumber = `Number ${numberToCall} has been called.`;
       this.clearDigit();
 
-      setTimeout(() => {
-        this.calledNumber = '';  // Clears the message after 3 seconds
-      }, 3000);
+      // ✅ Store the called number
+      localStorage.setItem('calledQueueNumber', numberToCall.toString());
 
+      setTimeout(() => {
+        this.calledNumber = '';
+      }, 3000);
     } catch (error) {
       console.error('Error calling number:', error);
     }
   }
 }
+
 
 deleteLastDigit() {
     this.currentInput = this.currentInput.slice(0, -1); 

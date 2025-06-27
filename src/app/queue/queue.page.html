@@ -9,8 +9,15 @@
       <div class="ticket-section top">
         <img src="assets/rezzub.png" alt="Rezzub" class="ticket-logo">
         <h2 class="number" *ngIf="!isEditing" (click)="startEditing()">
-          {{ latestNumber }}
-        </h2>
+  <ng-container *ngIf="!isCalled; else proceedMessage">
+    {{ latestNumber }}
+  </ng-container>
+  <ng-template #proceedMessage>
+    Please Proceed to Counter
+  </ng-template>
+</h2>
+
+
 
         <div *ngIf="isEditing" class="edit-number">
         <ion-input
