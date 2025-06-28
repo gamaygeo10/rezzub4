@@ -13,8 +13,10 @@
     {{ latestNumber }}
   </ng-container>
   <ng-template #proceedMessage>
-    Please Proceed to Counter
-  </ng-template>
+    <span class="your-number">{{ userQueueNumber | number:'3.0' }}</span><br>
+  Please Proceed to Counter
+</ng-template>
+
 </h2>
 
 
@@ -61,8 +63,14 @@
         <p class="queue-id">Queue ID: 287a2a46-d828-4ac9-b6e9-c3159553fcf2</p>
       </div>
       <div class="ticket-actions">
-        <ion-button expand="block" color="danger" (click)="cancelQueue()">Cancel Ticket</ion-button>
-      </div>
+  <ng-container *ngIf="!isCalled; else doneButton">
+    <ion-button expand="block" color="danger" (click)="cancelQueue()">Cancel Ticket</ion-button>
+  </ng-container>
+  <ng-template #doneButton>
+    <ion-button expand="block" color="success" (click)="doneQueue()">Done</ion-button>
+  </ng-template>
+</div>
+
     </div>
   </div>
 

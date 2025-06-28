@@ -120,4 +120,15 @@ watchQueueChanges(): Observable<number[]> {
   });
 }
 
+watchQueueDocs(): Observable<any[]> {
+  return new Observable(observer => {
+    const q = query(this.queueRef, orderBy('number', 'asc'));
+    const unsubscribe = onSnapshot(q, snapshot => {
+      observer.next(snapshot.docs);
+    });
+    return () => unsubscribe();
+  });
+}
+
+
 }

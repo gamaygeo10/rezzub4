@@ -39,7 +39,6 @@ export class QueuePage implements OnInit, OnDestroy {
       }
     });
 
-    // ✅ Load the called number from localStorage if set by admin call
     const called = localStorage.getItem('calledQueueNumber');
     if (called) {
       this.isCalled = true;
@@ -47,6 +46,8 @@ export class QueuePage implements OnInit, OnDestroy {
     }
 
     this.loadLatestNumber();
+    this.listenToQueueRealtime(); // ✅ Real-time sync with Firebase
+
   }
 
   ngOnDestroy() {
@@ -80,7 +81,6 @@ export class QueuePage implements OnInit, OnDestroy {
       await this.firebaseService.deleteLatestNumber();
       this.loadLatestNumber();
 
-      // ✅ Clear called flag when canceled
       localStorage.removeItem('calledQueueNumber');
       this.userQueueNumber = null;
       this.isCalled = false;
@@ -92,6 +92,14 @@ export class QueuePage implements OnInit, OnDestroy {
     } catch (error) {
       console.error('Error cancelling queue ticket:', error);
     }
+  }
+
+  // ✅ New method for Done button
+  doneQueue() {
+    localStorage.removeItem('calledQueueNumber');
+    this.userQueueNumber = null;
+    this.isCalled = false;
+    console.log('User confirmed completion. Message cleared.');
   }
 
   startEditing() {
@@ -111,4 +119,53 @@ export class QueuePage implements OnInit, OnDestroy {
       }
     }
   }
+
+  listenToQueueRealtime() {
+  this.firebaseService.watchQueueChanges().subscribe(numbers => {
+    const called = localStorage.getItem('calledQueueNumber');
+
+    if (!numbers || numbers.length === 0) {
+      this.latestNumber = '--';
+      this.secondLatestNumber = '--';
+
+      // ✅ Still show proceed if user had a called number
+      if (called) {
+        const calledNumber = parseInt(called, 10);
+        this.userQueueNumber = calledNumber;
+        this.isCalled = true;
+        console.log('✅ User\'s number was called or deleted, queue is now empty:', calledNumber);
+      } else {
+        this.isCalled = false;
+        this.userQueueNumber = null;
+      }
+
+      return;
+    }
+
+    const latestNum = numbers[numbers.length - 1];
+    const secondLatestNum = numbers.length > 1 ? numbers[numbers.length - 2] : null;
+
+    this.latestNumber = latestNum.toString().padStart(3, '0');
+    this.secondLatestNumber = secondLatestNum !== null ? secondLatestNum.toString().padStart(3, '0') : '--';
+
+    if (called) {
+      const calledNumber = parseInt(called, 10);
+      this.userQueueNumber = calledNumber;
+
+      // ✅ Proceed if user’s number was removed (not in queue anymore)
+      if (!numbers.includes(calledNumber)) {
+        this.isCalled = true;
+        console.log('✅ User\'s number was called or deleted:', calledNumber);
+      } else {
+        this.isCalled = false;
+      }
+    } else {
+      this.isCalled = false;
+      this.userQueueNumber = null;
+    }
+  });
+}
+
+
+
 }
