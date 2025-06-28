@@ -131,4 +131,31 @@ watchQueueDocs(): Observable<any[]> {
 }
 
 
+// ✅ Get all queue numbers with ID (for user list)
+async getUserQueueData(): Promise<any[]> {
+  const q = query(this.queueRef, orderBy('number', 'asc'));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(doc => ({
+    id: doc.id,
+    number: doc.data()['number']
+  }));
+}
+
+// ✅ Delete a specific queue number by ID
+async deleteQueueItem(id: string): Promise<void> {
+  const docRef = doc(this.queueRef, id);
+  await deleteDoc(docRef);
+}
+
+async getLatestUserQueueItem(): Promise<any | null> {
+  const q = query(this.queueRef, orderBy('number', 'desc'), limit(1));
+  const snapshot = await getDocs(q);
+  if (!snapshot.empty) {
+    const docSnap = snapshot.docs[0];
+    return { id: docSnap.id, number: docSnap.data()['number'] };
+  }
+  return null;
+}
+
+
 }
