@@ -4,7 +4,7 @@
   </ion-button>
 
   <ion-button expand="block" color="medium" (click)="openQueueListModal()">
-    View My Queue Tickets
+    View My Ticket List
   </ion-button>
 
   <!-- Ticket -->
@@ -145,4 +145,30 @@
       </ion-content>
     </ng-template>
   </ion-modal>
+
+<!-- Message Display Centered -->
+<div class="empty-message" *ngIf="displayMessage"
+     style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; text-align: center; color: white;">
+  
+  <p style="font-size: 1.4rem; margin: 0;">
+    {{ displayMessage }}
+  </p>
+
+  <p style="font-size: 1.4rem; display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 8px;">
+    <span>{{ subMessage }}</span>
+    
+    <ng-container *ngIf="showTicketListButton">
+      <ion-button fill="clear" size="small" color="primary" style="text-transform: none; font-size: 1.4rem; margin-left: -20px;" (click)="openQueueListModal()">
+        Ticket List.
+      </ion-button>
+    </ng-container>
+
+    <ng-container *ngIf="showCameraButton">
+      <ion-button fill="clear" size="small" color="primary" style="text-transform: none; font-size: 1.4rem; margin-left: -20px" (click)="navigateTo('/home')">
+        Join the Queue.
+      </ion-button>
+    </ng-container>
+  </p>
+</div>
+
 </ion-content>

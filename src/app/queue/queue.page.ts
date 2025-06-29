@@ -29,9 +29,13 @@ export class QueuePage implements OnInit, OnDestroy {
   allUserQueueData: any[] = [];
   isQueueListModalOpen = false;
   selectedQueueNumber: any = null;
-  calledQueueBackup: any = null; // Store deleted ticket temporarily
-  calledQueueIds: Set<string> = new Set(); // To track which tickets were called/deleted
+  calledQueueBackup: any = null;
+  calledQueueIds: Set<string> = new Set();
   cancelledQueueIds = new Set<string>();
+
+  displayMessage: string | null = null;
+  showTicketListButton = false;
+  showCameraButton = false;
 
   private routerSub?: Subscription;
   private queueSub?: Subscription;
@@ -63,38 +67,31 @@ export class QueuePage implements OnInit, OnDestroy {
   }
 
   async loadUserQueues() {
-  this.allUserQueueData = await this.firebaseService.getUserQueueData();
-
-  // Check if currently selected ticket still exists
-  const exists = this.allUserQueueData.some(item => item.id === this.selectedQueueNumber?.id);
-  
-  // ✅ If user’s current ticket is removed, mark as called
-  if (!exists && this.selectedQueueNumber !== null) {
-    const called = localStorage.getItem('calledQueueNumber');
-    if (called) {
-      this.userQueueNumber = parseInt(called, 10);
-      this.isCalled = true;
-      this.selectedQueueNumber = null;
-      console.log('✅ User ticket was deleted or called. Show proceed message.');
+    this.allUserQueueData = await this.firebaseService.getUserQueueData();
+    const exists = this.allUserQueueData.some(item => item.id === this.selectedQueueNumber?.id);
+    if (!exists && this.selectedQueueNumber !== null) {
+      const called = localStorage.getItem('calledQueueNumber');
+      if (called) {
+        this.userQueueNumber = parseInt(called, 10);
+        this.isCalled = true;
+        this.selectedQueueNumber = null;
+      }
+    }
+    if (this.allUserQueueData.length > 0) {
+      const latest = this.allUserQueueData[this.allUserQueueData.length - 1];
+      this.selectQueueItem(latest);
+    } else {
+      this.updateEmptyMessage();
     }
   }
-
-  // ✅ Always display the latest added ticket if any exist
-  if (this.allUserQueueData.length > 0) {
-    const latest = this.allUserQueueData[this.allUserQueueData.length - 1];
-    this.selectQueueItem(latest);
-  }
-}
-
-
 
   selectQueueItem(item: any) {
     this.selectedQueueNumber = item;
     this.userQueueNumber = item.number;
     this.isCalled = false;
     this.latestNumber = item.number.toString().padStart(3, '0');
-    this.secondLatestNumber = '--'; // Could be improved with better context
-
+    this.secondLatestNumber = '--';
+    this.displayMessage = null;
     this.listenToQueueRealtime();
     this.closeQueueListModal();
   }
@@ -120,53 +117,35 @@ export class QueuePage implements OnInit, OnDestroy {
   }
 
   async cancelQueue() {
-  try {
-    if (!this.selectedQueueNumber) return;
+    try {
+      if (!this.selectedQueueNumber) return;
+      const cancelId = this.selectedQueueNumber.id;
+      this.cancelledQueueIds.add(cancelId);
+      await this.firebaseService.deleteQueueItem(cancelId);
+      localStorage.removeItem('calledQueueNumber');
+      this.allUserQueueData = this.allUserQueueData.filter(item => item.id !== cancelId);
+      if (this.selectedQueueNumber?.id === cancelId) {
+        this.selectedQueueNumber = null;
+        this.userQueueNumber = null;
+        this.isCalled = false;
+        this.updateEmptyMessage();
+      }
+    } catch (error) {
+      console.error('Error cancelling queue:', error);
+    }
+  }
 
-    const cancelId = this.selectedQueueNumber.id;
-
-    // Mark as cancelled
-    this.cancelledQueueIds.add(cancelId);
-
-    await this.firebaseService.deleteQueueItem(cancelId);
-    localStorage.removeItem('calledQueueNumber');
-
-    // Remove only the cancelled one
-    this.allUserQueueData = this.allUserQueueData.filter(item => item.id !== cancelId);
-
-    // If selected is the one cancelled, reset view
-    if (this.selectedQueueNumber?.id === cancelId) {
+  doneQueue(ticketId: string) {
+    this.allUserQueueData = this.allUserQueueData.filter(item => item.id !== ticketId);
+    this.calledQueueIds.delete(ticketId);
+    if (this.selectedQueueNumber?.id === ticketId) {
       this.selectedQueueNumber = null;
       this.userQueueNumber = null;
       this.isCalled = false;
+      this.updateEmptyMessage();
     }
-
-    console.log('❌ Ticket cancelled by user.');
-
-    // No full reload here → we just updated the list manually
-  } catch (error) {
-    console.error('Error cancelling queue:', error);
+    localStorage.removeItem('calledQueueNumber');
   }
-}
-
-
-
-  doneQueue(ticketId: string) {
-  this.allUserQueueData = this.allUserQueueData.filter(item => item.id !== ticketId);
-  this.calledQueueIds.delete(ticketId);
-
-  // If the selected one is removed, clear it
-  if (this.selectedQueueNumber?.id === ticketId) {
-    this.selectedQueueNumber = null;
-    this.userQueueNumber = null;
-    this.isCalled = false;
-  }
-
-  localStorage.removeItem('calledQueueNumber');
-  console.log('✅ Done clicked for:', ticketId);
-}
-
-
 
   startEditing() {
     this.editValue = this.latestNumber;
@@ -175,7 +154,6 @@ export class QueuePage implements OnInit, OnDestroy {
 
   async saveEditedNumber() {
     if (!this.selectedQueueNumber) return;
-
     const newNumber = parseInt(this.editValue, 10);
     if (!isNaN(newNumber)) {
       await this.firebaseService.updateNumber(this.selectedQueueNumber.id, newNumber);
@@ -185,50 +163,64 @@ export class QueuePage implements OnInit, OnDestroy {
   }
 
   listenToQueueRealtime() {
-  this.queueSub?.unsubscribe();
-  this.queueSub = this.firebaseService.watchQueueDocs().subscribe(docs => {
-    const currentIds = docs.map(d => d.id);
-    const called = localStorage.getItem('calledQueueNumber');
+    this.queueSub?.unsubscribe();
+    this.queueSub = this.firebaseService.watchQueueDocs().subscribe(docs => {
+      const currentIds = docs.map(d => d.id);
+      const called = localStorage.getItem('calledQueueNumber');
 
-    // Flag tickets as deleted (if not cancelled)
-    this.allUserQueueData.forEach(item => {
-      if (!currentIds.includes(item.id) && !this.cancelledQueueIds.has(item.id)) {
-        this.calledQueueIds.add(item.id);
-      }
-    });
-
-    this.firebaseService.getUserQueueData().then(data => {
-      const updated: any[] = [];
-
-      // Include active tickets
-      data.forEach(item => {
-        updated.push(item);
-        this.calledQueueIds.delete(item.id); // Unmark if restored
-      });
-
-      // Re-include previously deleted (called) tickets
       this.allUserQueueData.forEach(item => {
-        if (this.calledQueueIds.has(item.id) && !updated.find(d => d.id === item.id)) {
-          updated.push(item);
+        if (!currentIds.includes(item.id) && !this.cancelledQueueIds.has(item.id)) {
+          this.calledQueueIds.add(item.id);
         }
       });
 
-      this.allUserQueueData = updated;
+      this.firebaseService.getUserQueueData().then(data => {
+        const updated: any[] = [];
+        data.forEach(item => {
+          updated.push(item);
+          this.calledQueueIds.delete(item.id);
+        });
 
-      // Check if selected is now deleted (but not cancelled)
-      if (
-        this.selectedQueueNumber &&
-        !currentIds.includes(this.selectedQueueNumber.id) &&
-        !this.cancelledQueueIds.has(this.selectedQueueNumber.id)
-      ) {
-        if (called) {
-          this.userQueueNumber = parseInt(called, 10);
-          this.isCalled = true;
-          console.log('✅ Showing proceed message for selected deleted ticket.');
+        this.allUserQueueData.forEach(item => {
+          if (this.calledQueueIds.has(item.id) && !updated.find(d => d.id === item.id)) {
+            updated.push(item);
+          }
+        });
+
+        this.allUserQueueData = updated;
+
+        if (
+          this.selectedQueueNumber &&
+          !currentIds.includes(this.selectedQueueNumber.id) &&
+          !this.cancelledQueueIds.has(this.selectedQueueNumber.id)
+        ) {
+          if (called) {
+            this.userQueueNumber = parseInt(called, 10);
+            this.isCalled = true;
+          }
         }
-      }
+
+        if (!this.selectedQueueNumber && this.allUserQueueData.length === 0) {
+          this.updateEmptyMessage();
+        }
+      });
     });
-  });
+  }
+  subMessage: string = '';
+
+
+  updateEmptyMessage() {
+  if (this.allUserQueueData.length === 0) {
+    this.displayMessage = 'No tickets available,';
+    this.subMessage = 'Please';
+    this.showCameraButton = true;
+    this.showTicketListButton = false;
+  } else {
+    this.displayMessage = 'Ticket no longer available.';
+    this.subMessage = 'Please check your';
+    this.showCameraButton = false;
+    this.showTicketListButton = true;
+  }
 }
 
 }
